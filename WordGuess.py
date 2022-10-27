@@ -1,13 +1,15 @@
-from ast import Return
+from ast import Break, Return
+
 from dataclasses import dataclass
 from datetime import datetime
 import random
-from SharedFunctions import Get_WordFamilyList, Algor_Method, Filter_wordList, addLetterToWordDisplay
+from colorama import Fore
+from SharedFunctions import Get_WordFamilyList, Filter_wordList_easy, Filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
-    setLevel = "easy"
-    gameComplete = False
+    setLevel = None
+    game_complete = None
     guesses = 0
     wordFamilyList = []
     wordLength = 0
@@ -26,108 +28,137 @@ class WordGuess:
 
         #open text file and save to list
         self.wordFamilyList = Get_WordFamilyList(self.wordLength)
-        print(f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
+        print(Fore.RED + f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
         # asking user to set the level for the game.
         while True:
-            answer = input("Would you like to play on easy mode y/n: ").lower()
-            if answer == 'y':
+            answer = input(Fore.CYAN+"Would you like to play on easy mode y/n: ").upper()
+            if answer == 'Y':
                 self.setLevel = "easy"
-                print("Good choice, you may stand a chance")
+                print(Fore.YELLOW+"Good choice, you may stand a chance")
                 break
-            elif answer == 'n':
+            elif answer == 'N':
                 self.setLevel = "hard"
-                print("Ok hard it is then, good luck")
+                print(Fore.YELLOW+"Ok hard it is then, good luck")
                 break
             else:
-                print("Did not compute..try again")
+                print(Fore.RED+"Did not compute..try again")
             
-
+    # main game loop easy level 
     def wordGuess_game(self):
-        # set algorithm to use and call when ever its actually created add letterGuess as param
-        self.CallAlgorithm = Algor_Method(self.setLevel,self.wordFamilyList)
+       
         self.usedLetters = []
         self.wordDisplay = '-'*self.wordLength
-
-        # put in while loop when ready 
-        game_complete = False
-        while game_complete == False:
-            print("You have {0} guesses left".format(self.guesses))
-            print("Used letters so far: {0}".format(self.usedLetters))
-            print("Word: ",self.wordDisplay)
-            
-            while True:
-                self.letterGuess = input("Enter a letter: ").lower()
-                if self.letterGuess.isalpha() == True & len(self.letterGuess) == 1:
-                    # if letter not already guessed then append
-                    if self.letterGuess in self.usedLetters:
-                        print("This has already been guessed try again")
-                        Return
+        self.game_complete = False
+        # start game loop till game complete is true
+        while self.game_complete == False:
+            #self.Rules()
+            self.usedLetters.sort()
+            print(Fore.CYAN+"You have {0} guesses left".format(self.guesses))
+            print(Fore.CYAN+"Used letters so far: {0}".format(self.usedLetters))
+            print(Fore.GREEN+"Word: ",self.wordDisplay)
+            self.letterGuess = input(Fore.WHITE+"Enter a letter: ").lower()
+            if self.letterGuess.isalpha() == True and len(self.letterGuess) == 1:
+                # if letter not already guessed then append
+                if self.letterGuess in self.usedLetters:
+                    print(Fore.RED + "This has already been guessed try again")
+                    Return
+                # used filter_wordList as easy algorithm, need to relabel and include 
+                # setlevel if else line 70, all others to be used as is
+                elif self.guesses>0:
+                    print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
+                    # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
+                    if self.setLevel == 'easy':
+                        returnStuff = Filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
+                    if self.setLevel == 'hard':
+                        returnStuff = Filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
+                        #returnStuff = Filter_wordList_hard(self.wordFamilyList,self.wordLength,self.letterGuess)
+                    self.wordFamilyList, letterGuessIdx, functionComplete = returnStuff # unpack tuple
+                    print(Fore.RED + f"WordList length after function = {len(self.wordFamilyList)}")
+                    # when no letter matched letterOccurred is 0
+                    if functionComplete is False:
+                        self.usedLetters.append(self.letterGuess)
+                        self.guesses -= 1
+                    # if a letter is matched
+                    elif functionComplete is True:
+                        wordAmend = addLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
+                        self.wordDisplay = wordAmend
+                        self.usedLetters.append(self.letterGuess)
+                        #self.guesses -= 1 #used in testing 
+                        print(Fore.GREEN+f"Word display: {self.wordDisplay}")
                     else:
-                        print(f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
-                        # put partition_words function here?
-                        # returning targetWordListSplit,letterOccurSplit,functionComplete
-                        returnStuff = Filter_wordList(self.wordFamilyList,self.wordLength,self.letterGuess)
-                        self.wordFamilyList = returnStuff[0]
-                        letterGuessIdx = returnStuff[1]
-                        functionComplete = returnStuff[2]
-                        print(f"WordList length after function = {len(self.wordFamilyList)}")
-                        print(f"Letter occurred index = {letterGuessIdx}, and function complete = {functionComplete}")
-                        # when no letter matched letterOccurred is 0
-                        if functionComplete == False:
-                            self.usedLetters.append(self.letterGuess)
-                            self.guesses -= 1
-                            #print(f"Word display: {self.wordDisplay}")
-                            Return
-                        if functionComplete == True:
-                            wordAmend = addLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
-                            self.wordDisplay = wordAmend
-                            self.usedLetters.append(self.letterGuess)
-                            # add 1 to guesses when safe to append letter that has not been guessed already
-                            self.guesses -= 1
-                            print(f"Word display: {self.wordDisplay}")
-                        else:
-                            print("Filter_wordList completeFunction is false")
-                            break
-                else:
-                    print("Eh computer says no, please try again")
-            if self.guesses == 0:
-                self.wordGuess_end()
+                        #print(f"Filter_wordList completeFunction = {functionComplete}")
+                        break
+                    self.gameEndConditions()
+            else:
+                print(Fore.RED + "Eh computer says no, please try again")
+            
                 
-        #
-        # first run with first guess need to include to above loop 
-        # partition_words function returns 2: list (new word list) and int (letter index)
-        #newWordList,displayWordIndex,done = Partition_Words(self.wordFamilyList,self.wordLength,self.letterGuess,self.letterIndex)
-        # display word if letter guess is accepted
-
-        print("Good guess")
-
 
     def wordGuess_end(self):
+        word = selectWinningWord(self.wordFamilyList)
         if self.guesses == 0:
             self.game_complete = True
-            print("You have no guesses left, the computer has won..hoorah!")
+            print(Fore.GREEN+f"You have no guesses left,\nthe word you could not guess was {word}.")
+            print(Fore.GREEN+"The computer has won..hoorah!")
         if "-" not in self.wordDisplay:
             print(self.wordDisplay)
-            print("Well done you have guessed the word and beaten the computer")
+            print(Fore.GREEN+"Well done you have guessed the word and beaten the computer.")
+            print(Fore.GREEN+"\nOne bows to your superiority. \nVery well done.")
         else:
             return
 
+    # crispy logic rules
+    def gameEndConditions(self):
+        if self.guesses == 0:
+            self.game_complete = True
+        if len(self.wordFamilyList) == 1 and self.guesses > 0:
+            print(Fore.GREEN+f"The only word left is {self.wordFamilyList} you won well done")
+            self.game_complete = True
+        if len(self.wordFamilyList) == 1 and self.guesses == 0:
+            print(Fore.GREEN+f"The only word left is {self.wordFamilyList}")
+            self.game_complete = True
+        if '-' not in self.wordDisplay:
+            self.game_complete = True
+        
 
 
+# Issues and bugs
+# if largest group involves more than 2 occurrences need to account for it as only one entered in word display
+# set rules as not setout as crispy logic DONE
+# 0 guesses still showing up DONE
+# if all letters guessed and still have guesses does not end DONE
+# set different algorithms for optimized easy and hard.
+# add option to replay in main DONE
+# sort guessed letters list DONE
+# 
 
 newGame = WordGuess()
 
 # call separate methods to test and then amalgamate them
 def main():
-    #Word guess game using an easy level (on-cheat) and hard level (cheat)
-    now = datetime.now()
-    displayDatetime = now.strftime("Date-> %d-%m-%Y, Time-> %H:%M")
-    print(f"\n{displayDatetime}")
+    ans = 'y'
+    while ans == 'y':
+        #Word guess game using an easy level (on-cheat) and hard level (cheat)
+        now = datetime.now()
+        displayDatetime = now.strftime(Fore.BLUE+"Date-> %d-%m-%Y, Time-> %H:%M")
+        print(Fore.BLUE+f"\n{displayDatetime}")
+        print(Fore.CYAN+f"Welcome to the Word Guess game\n")
+        newGame.setupLevel()
+        newGame.wordGuess_game()
+        newGame.wordGuess_end() 
+        while True:
+            try:
+                ans = input("Would you like to play again y/n: ").lower()
+                if ans == 'y':
+                    break
+                elif ans == 'n':
+                    print("Thankyou for playing. \nHave a nice day.")
+                    exit() 
+            except ValueError:
+                print("Don't understand, try again")
+                
+    
 
-    print(f"Welcome to the Word Guess game\n")
-    newGame.setupLevel()
-    newGame.wordGuess_game()
-    newGame.wordGuess_end() # only here to finish program while testing
     
     
     
