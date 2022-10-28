@@ -49,7 +49,10 @@ class WordGuess:
         # start game loop till game complete is true
         while self.game_complete == False:
             self.usedLetters.sort()
-            print(Fore.CYAN+"You have {0} guesses left".format(self.guesses))
+            if self.guesses == 1:
+                print(Fore.CYAN+"You have {0} guess left".format(self.guesses))
+            else:
+                print(Fore.CYAN+"You have {0} guesses left".format(self.guesses))
             print(Fore.CYAN+"Used letters so far: {0}".format(self.usedLetters))
             print(Fore.GREEN+"Word: ",self.wordDisplay)
             self.letterGuess = input(Fore.WHITE+"Enter a letter: ").lower()
@@ -96,7 +99,7 @@ class WordGuess:
         if "-" not in self.wordDisplay:
             print(self.wordDisplay)
             print(Fore.GREEN+"Well done you have guessed the word and beaten the computer.")
-            print(Fore.GREEN+"\nOne bows to your superiority. \nVery well done.")
+            print(Fore.GREEN+"One bows to your superiority. __!==O__ \nVery well done.")
         else:
             return
 
@@ -109,8 +112,10 @@ class WordGuess:
             self.game_complete = True
         if '-' not in self.wordDisplay:
             self.game_complete = True
-        if len(self.wordFamilyList) == 0:       ## delete after testing
-            print(Fore.GREEN+f"Something went wrong sorry.")
+        ## delete after testing try catch didn't throw error as not Exception
+        if len(self.wordFamilyList) == 0:    
+            # don't want to throw Exception but carry on with another try   
+            print(Fore.GREEN+f"Something went wrong sorry.") 
             self.game_complete = True 
 
 

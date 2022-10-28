@@ -24,6 +24,8 @@ def Get_WordFamilyList(wordLen):
     
 # Add successful letter(s) 1 to 3 to word display
 def AddLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
+    # passing in list representing index of letter occurrence and
+    # len of letterIndex is how many letters (did try for loop)
     word1=list(wordDisplay)
     word1[letterIndex[0]] = letterGuess
     if len(letterIndex)==2:
