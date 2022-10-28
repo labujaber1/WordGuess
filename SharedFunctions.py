@@ -1,7 +1,6 @@
 from colorama import Fore
 from operator import countOf
 import random
-import re
 from xmlrpc.client import Boolean
 import numpy as np
 import pandas as pd
@@ -24,15 +23,25 @@ def Get_WordFamilyList(wordLen):
         return
     
 # Add successful letter guessed to word to display to user CHANGE FOR 2 LETTERS
-def addLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
+def AddLetterToWordDisplay2(wordDisplay,letterIndex1,letterGuess):
     word1=list(wordDisplay)
-    word1[letterIndex] = letterGuess
+    word1[letterIndex1] = letterGuess
     word = ''.join(word1)
     return word
 
+# make letterIndex list to hold two values
+def AddLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
+    # find occurrences of letter and replace
+    word1=list(wordDisplay)
+    word1[letterIndex[0]] = letterGuess
+    if len(letterIndex)>1:
+        word1[letterIndex[1]] = letterGuess
+    word = ''.join(word1)
+    return word
+    
 # if no guesses left select a word from remaining list to display for user
 # make them think it was this word they were trying to guess all along
-def selectWinningWord(wordList):
+def SelectWinningWord(wordList):
     listLength = len(wordList)
     num = random.randrange(0,listLength)
     word = wordList[num]
@@ -70,7 +79,6 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
         if index2 < 4:
             listOccurTotal = len(list(word for word in wordList1 if countOf(word,letterGuess) == index2))
             listTotal.append(listOccurTotal)
-            #print(f"No. of letters = {index2}, and total words = {listTotal}")
             index2 += 1
         else:
             bool = False
@@ -106,7 +114,7 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
     res = []
     while bool is True:
         if idx < wordLength:
-            # for each word in list count letterGuess in each word index
+            # for each word in list count letterGuess in each index of word
             for word in targetWordList:
                 if word[idx] == letterGuess:
                     count = count + 1
@@ -119,26 +127,45 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
 
     # create list of words that have largest group of words where
     # letterGuess is in a certain position within wordLength
-    letterOccurSplitIdx = res.index(max(res))
+    letterOccurSplitIdx = []
+    letterOccurSplitIdx.append(res.index(max(res)))   # change to list to take two indexes 
+    
+    # find second largest letter occurrences to filter list if letterOccur > 1
+    if letterOccur == 2:
+        res.sort()
+        resSortSecBigVal:int = res[-2]# returning val or index?
+        print(f"{resSortSecBigVal = }")
+        letterOccurSplitIdx.append(res.index(resSortSecBigVal))
+    ############## missing something here ?????????
+    # append second largest position index
+     
     targetWordListSplit = []
+    listLength = len(targetWordList)
+   
     # replace original param list wordList with end result targetWordListSplit to process 
     # newly entered letterGuess from user
-    targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx] == letterGuess]
+    if listLength > 50:
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess]
+        print(f"List length > 50 line 149 = {listLength}")
+    # start identifying 2 occurrences of a letter to display 
+    # but may reduce list significantly but no choice, adjust list length to get balance
+    elif listLength <= 50 and letterOccur == 2:
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1]]== letterGuess]
+        print(f"Check 2 occurrences of letter, print list ->\n{targetWordListSplit = } ")
+    elif listLength <= 50 and letterOccur == 3:
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1] and letterOccurSplitIdx[2]]== letterGuess]
+        print(f"Check 2 occurrences of letter, print list ->\n{targetWordListSplit = } ")
     
-    
-    # remove words with more than 1 occurrence if wordlist > 200
-    # else add the letter to other position in display word funct
-    if len(targetWordListSplit) > 200:
-        targetWordListSplit = targetWordListSplit(filter(lambda word: ))
-    
-    
+    else:
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess]
+        print(f"List length else line 164 = {listLength}")        
     #if completed with letter return true else already returned false line 89
     functionComplete = True 
      # clear PREVIOUS USED temp word lists ready to pass in for next cycle  
     wordList1.clear()
     targetWordList.clear()
     # RETURN new word list,index position of successful letter, and function complete marker (true/false)
-    return (targetWordListSplit,letterOccurSplitIdx,functionComplete)
+    return (targetWordListSplit,letterOccurSplitIdx,functionComplete) # filtered words above so may not need splitIdx num for word display
     ## index position used to display guessed letter in wordDisplay var for user
     
 

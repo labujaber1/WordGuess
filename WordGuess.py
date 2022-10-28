@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import random
 from colorama import Fore
-from SharedFunctions import Get_WordFamilyList, Filter_wordList_easy, Filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
+from SharedFunctions import Get_WordFamilyList, Filter_wordList_easy, Filter_wordList_hard, AddLetterToWordDisplay, SelectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -80,7 +80,7 @@ class WordGuess:
                         self.guesses -= 1
                     # if a letter is matched
                     elif functionComplete is True:
-                        wordAmend = addLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
+                        wordAmend = AddLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
                         self.wordDisplay = wordAmend
                         self.usedLetters.append(self.letterGuess)
                         #self.guesses -= 1 #used in testing 
@@ -95,7 +95,7 @@ class WordGuess:
                 
 
     def wordGuess_end(self):
-        word = selectWinningWord(self.wordFamilyList)
+        word = SelectWinningWord(self.wordFamilyList)
         if self.guesses == 0:
             self.game_complete = True
             print(Fore.GREEN+f"You have no guesses left,\nthe word you could not guess was {word}.")
@@ -111,15 +111,14 @@ class WordGuess:
     def gameEndConditions(self):
         if self.guesses == 0:
             self.game_complete = True
-        if len(self.wordFamilyList) == 1 and self.guesses > 0:
-            print(Fore.GREEN+f"The only word left is {self.wordFamilyList} you won well done")
-            self.game_complete = True
-        if len(self.wordFamilyList) == 1 and self.guesses == 0:
+        if len(self.wordFamilyList) <= 1 and self.guesses == 0:
             print(Fore.GREEN+f"The only word left is {self.wordFamilyList}")
             self.game_complete = True
         if '-' not in self.wordDisplay:
             self.game_complete = True
-        
+        if len(self.wordFamilyList) == 0:       ## delete after testing
+            print(Fore.GREEN+f"Something went wrong sorry.")
+            self.game_complete = True 
 
 
 # Issues and bugs
