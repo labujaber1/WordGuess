@@ -22,20 +22,15 @@ def Get_WordFamilyList(wordLen):
         print(Fore.WHITE+f"Dictionary file not found.")
         return
     
-# Add successful letter guessed to word to display to user CHANGE FOR 2 LETTERS
-def AddLetterToWordDisplay2(wordDisplay,letterIndex1,letterGuess):
-    word1=list(wordDisplay)
-    word1[letterIndex1] = letterGuess
-    word = ''.join(word1)
-    return word
-
-# make letterIndex list to hold two values
+# Add successful letter(s) 1 to 3 to word display
 def AddLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
-    # find occurrences of letter and replace
     word1=list(wordDisplay)
     word1[letterIndex[0]] = letterGuess
-    if len(letterIndex)>1:
+    if len(letterIndex)==2:
         word1[letterIndex[1]] = letterGuess
+    if len(letterIndex)==3:
+        word1[letterIndex[1]] = letterGuess 
+        word1[letterIndex[2]] = letterGuess 
     word = ''.join(word1)
     return word
     

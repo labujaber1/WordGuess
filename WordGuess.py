@@ -1,5 +1,4 @@
 from ast import Break, Return
-
 from dataclasses import dataclass
 from datetime import datetime
 import random
@@ -18,8 +17,6 @@ class WordGuess:
     wordDisplay = ""
     letterGuess = ""
     letterIndex = 0
-
-
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
@@ -43,7 +40,7 @@ class WordGuess:
             else:
                 print(Fore.RED+"Did not compute..try again")
             
-    # main game loop easy level 
+    # main game loop, line 71 and 73 select easy or hard functions 
     def wordGuess_game(self):
        
         self.usedLetters = []
@@ -51,7 +48,6 @@ class WordGuess:
         self.game_complete = False
         # start game loop till game complete is true
         while self.game_complete == False:
-            #self.Rules()
             self.usedLetters.sort()
             print(Fore.CYAN+"You have {0} guesses left".format(self.guesses))
             print(Fore.CYAN+"Used letters so far: {0}".format(self.usedLetters))
@@ -62,8 +58,6 @@ class WordGuess:
                 if self.letterGuess in self.usedLetters:
                     print(Fore.RED + "This has already been guessed try again")
                     Return
-                # used filter_wordList as easy algorithm, need to relabel and include 
-                # setlevel if else line 70, all others to be used as is
                 elif self.guesses>0:
                     print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
                     # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
@@ -80,10 +74,9 @@ class WordGuess:
                         self.guesses -= 1
                     # if a letter is matched
                     elif functionComplete is True:
-                        wordAmend = AddLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
-                        self.wordDisplay = wordAmend
+                        wordDisplayAmend = AddLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
+                        self.wordDisplay = wordDisplayAmend
                         self.usedLetters.append(self.letterGuess)
-                        #self.guesses -= 1 #used in testing 
                         print(Fore.GREEN+f"Word display: {self.wordDisplay}")
                     else:
                         #print(f"Filter_wordList completeFunction = {functionComplete}")
@@ -93,7 +86,7 @@ class WordGuess:
                 print(Fore.RED + "Eh computer says no, please try again")
             
                 
-
+    # end game messages
     def wordGuess_end(self):
         word = SelectWinningWord(self.wordFamilyList)
         if self.guesses == 0:
@@ -107,7 +100,7 @@ class WordGuess:
         else:
             return
 
-    # crispy logic rules
+    # conditions to end the game
     def gameEndConditions(self):
         if self.guesses == 0:
             self.game_complete = True
@@ -122,14 +115,8 @@ class WordGuess:
 
 
 # Issues and bugs
-# if largest group involves more than 2 occurrences need to account for it as only one entered in word display
-# set rules as not setout as crispy logic DONE
-# 0 guesses still showing up DONE
-# if all letters guessed and still have guesses does not end DONE
+# if largest group involves more than 2 occurrences need to account for it as only one entered in word display DONE
 # set different algorithms for optimized easy and hard.
-# add option to replay in main DONE
-# sort guessed letters list DONE
-# 
 
 newGame = WordGuess()
 
@@ -155,14 +142,8 @@ def main():
                     exit() 
             except ValueError:
                 print("Don't understand, try again")
-                
-    
 
-    
-    
-    
-
-# this is how the program starts
+# this is how the program starts calling main function shown above
 if __name__ == '__main__':
     main()
     
