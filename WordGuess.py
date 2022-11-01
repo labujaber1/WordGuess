@@ -20,11 +20,13 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        self.wordLength = random.randrange(4,12)
+        self.wordLength = random.randrange(4,12) ###############
+        #self.wordLength = 6 # for testing #######################
         self.guesses = self.wordLength*2
 
         #open text file and save to list
-        self.wordFamilyList = Get_WordFamilyList(self.wordLength)
+        self.wordFamilyList = Get_WordFamilyList(self.wordLength) ###########
+        #self.wordFamilyList = ['beebeb','cecece' ]#################################
         print(Fore.RED + f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
         # asking user to set the level for the game.
         while True:
@@ -115,13 +117,43 @@ class WordGuess:
         ## delete after testing try catch didn't throw error as not Exception
         if len(self.wordFamilyList) == 0:    
             # don't want to throw Exception but carry on with another try   
-            print(Fore.GREEN+f"Something went wrong sorry.") 
+            print(Fore.GREEN+f"Sorry, something seems to have gone wrong.") 
             self.game_complete = True 
 
+    def AlphabetWeighting(self):
+        my_file = open("dictionary.txt","r")
+        wordList  = my_file.read().split()
+        my_file.close()
+        
+        alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        letterTotal = {}
+        letterFractionOfAlphabet = 0.038 # each letter 1/26
+        sumLetters = 0
+        # get total occurrence each letter in alphabet in word list.
+        for i in alphabet:
+            tot=0
+            for j in wordList:
+                if i in j:
+                    tot = tot + 1
+            letterTotal[i] = tot
+        #print(letterTotal)
+        # total letters in word list summed from aWeighting dictionary
+        sumLetters = sum(letterTotal.values()) 
+        #print(f"Sum of all letters in dictionary: \n{sumLetters}") # 863600 letters
 
-# Issues and bugs
-# if largest group involves more than 2 occurrences need to account for it as only one entered in word display DONE
-# set different algorithms for optimized easy and hard.
+        # for each alphabet letter calc. weighting
+        # total each letter / total letters * 10 to 2 d.p should give range 0 - 1
+        # assign to new dictionary
+        # first sort aWeighting by value
+        res = {key: val for key, val in sorted(letterTotal.items(), key = lambda ele: ele[1], reverse = True)}
+        #print(f" Result of sorted action: \n{res}")
+        letterWeight = res
+        
+        # round value to 2 d.p eg 'e'=0.99, 'q'=0.02
+        letterWeight.update((x,round(y / sumLetters * 10,2 )) for x,y in letterWeight.items())
+        print(f"Letter weight update: \n{letterWeight}")
+        #returns dict of weights for each word in the original dictionary
+        return letterWeight
 
 newGame = WordGuess()
 
@@ -134,6 +166,7 @@ def main():
         displayDatetime = now.strftime(Fore.BLUE+"Date-> %d-%m-%Y, Time-> %H:%M")
         print(Fore.BLUE+f"\n{displayDatetime}")
         print(Fore.CYAN+f"Welcome to the Word Guess game\n")
+        #newGame.AlphabetWeighting()
         newGame.setupLevel()
         newGame.wordGuess_game()
         newGame.wordGuess_end() 
