@@ -1,6 +1,5 @@
 from ast import Break, operator
 from tkinter import Y
-from xml.dom.minidom import Element
 from colorama import Fore
 from operator import *
 import random
@@ -14,7 +13,7 @@ import pandas as pd
 #read in dictionary.txt and sort by word length
 #write new list of words from random length selector
 #return new list for user to try and choose from
-def Get_WordFamilyList(wordLen):
+def get_WordFamilyList(wordLen):
     try:
         my_file = open("dictionary.txt","r")
         wordFamilyList  = my_file.read().split()
@@ -27,7 +26,7 @@ def Get_WordFamilyList(wordLen):
         return
     
 # Add successful letter(s) 1 or 2 to word display
-def AddLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
+def addLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
     word1=list(wordDisplay)
     word1[letterIndex[0]] = letterGuess
     if len(letterIndex)==2:
@@ -40,7 +39,7 @@ def AddLetterToWordDisplay(wordDisplay,letterIndex,letterGuess):
     
 # if no guesses left select a word from remaining list to display for user
 # make them think it was this word they were trying to guess all along
-def SelectWinningWord(wordList):
+def selectWinningWord(wordList):
     listLength = len(wordList)
     num = 0
     if listLength > 1:
@@ -50,7 +49,7 @@ def SelectWinningWord(wordList):
 
 # Append COUNT totals to a list of all occurrences of letterGuess between 0-2
 # how many times letter ie 'e' appears 0,1,2,3 times any more is no point
-def GetCountOfList(wordList1,letterGuess):
+def getCountOfList(wordList1,letterGuess):
     bool = True
     index2 = 0
     listTotals = []
@@ -64,7 +63,7 @@ def GetCountOfList(wordList1,letterGuess):
     print(Fore.RED + f"Total times the letter {letterGuess} appears in word 0-3 times = {listTotals}")
     return listTotals
 
-def DefWordFamDict(targetWordList,letterGuess):
+def defWordFamDict(targetWordList,letterGuess):
     wordFamily = dict()
     #temp = str(ele for word in targetWordList for ele in word if ele == letterGuess(ele = letterGuess) if ele != letterGuess(ele == '_'))
     #temp: str = temp1[0]
@@ -86,13 +85,13 @@ def DefWordFamDict(targetWordList,letterGuess):
 
 
 # pass in a word list and filter according to the user letter guess return new list
-def Filter_wordList_easy(wordList,wordLength,letterGuess):
+def filter_wordList_easy(wordList,wordLength,letterGuess):
     wordList1: list = wordList
     functionComplete: Boolean = False #false
     ## ------ FIRST LIST SPLIT SECTION -------- ##
     ## ---- RULE: pick largest group of words that contain letter
     # COUNT THEN ADD TO LIST to save memory space and reduce process time 
-    listTotal = GetCountOfList(wordList1,letterGuess)
+    listTotal = getCountOfList(wordList1,letterGuess)
     # select the largest count occurrence of the letterGuess param
     letterOccur = int(listTotal.index(max(listTotal)))
     
@@ -115,7 +114,7 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
         print(f"{targetWordList = }")
 
     wordIdx1 = []
-    wordIdx1 = WordListCountOccurEachIndex(wordLength,targetWordList,letterGuess)
+    wordIdx1 = wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess)
     
     letterOccurSplitIdx = []
     # get index of letter if only 1 letterOccur
@@ -128,7 +127,7 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
         #wordIdx1[letterOccurSplitIdx[0]]=0
         #letterOccurSplitIdx.append(wordIdx1.index(max(wordIdx1)))
         #print(f"indexes of max values in {letterOccurSplitIdx = }")
-        family = DefWordFamDict(targetWordList,letterGuess)
+        family = defWordFamDict(targetWordList,letterGuess)
         #largestFamily1 = []
         #largestFamily1.append(enumerate(max(family,key=family.get)))
         # if more than two families only unpack 1st tuple 
@@ -164,7 +163,7 @@ def Filter_wordList_easy(wordList,wordLength,letterGuess):
     return (targetWordListSplit,letterOccurSplitIdx,functionComplete) # filtered words above so may not need splitIdx num for word display
     
 
-def WordListCountOccurEachIndex(wordLength,targetWordList,letterGuess):
+def wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess):
     bool = True
     idx = 0 
     count = 0
@@ -186,7 +185,7 @@ def WordListCountOccurEachIndex(wordLength,targetWordList,letterGuess):
     
 
 
-def Filter_wordList_hard(wordList,wordLength,letterGuess):
+def filter_wordList_hard(wordList,wordLength,letterGuess):
 
     #return (targetWordListSplit,letterOccurSplitIdx,functionComplete)
     return 'not ready yet'

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import random
 from colorama import Fore
-from SharedFunctions import Get_WordFamilyList, Filter_wordList_easy, Filter_wordList_hard, AddLetterToWordDisplay, SelectWinningWord
+from SharedFunctions import get_WordFamilyList, filter_wordList_easy, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -12,7 +12,7 @@ class WordGuess:
     guesses = 0
     wordFamilyList = []
     wordLength = 0
-    CallAlgorithm = ""
+    #callAlgorithm = ""
     usedLetters = []
     wordDisplay = ""
     letterGuess = ""
@@ -25,7 +25,7 @@ class WordGuess:
         self.guesses = self.wordLength*2
 
         #open text file and save to list
-        self.wordFamilyList = Get_WordFamilyList(self.wordLength) ###########
+        self.wordFamilyList = get_WordFamilyList(self.wordLength) ###########
         #self.wordFamilyList = ['beebeb','cecece' ]#################################
         print(Fore.RED + f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
         # asking user to set the level for the game.
@@ -67,10 +67,10 @@ class WordGuess:
                     print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
                     # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
                     if self.setLevel == 'easy':
-                        returnStuff = Filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
+                        returnStuff = filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
                     if self.setLevel == 'hard':
-                        returnStuff = Filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
-                        #returnStuff = Filter_wordList_hard(self.wordFamilyList,self.wordLength,self.letterGuess)
+                        returnStuff = filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
+                        #returnStuff = filter_wordList_hard(self.wordFamilyList,self.wordLength,self.letterGuess)
                     self.wordFamilyList, letterGuessIdx, functionComplete = returnStuff # unpack tuple
                     print(Fore.RED + f"WordList length after function = {len(self.wordFamilyList)}")
                     # when no letter matched letterOccurred is 0
@@ -79,7 +79,7 @@ class WordGuess:
                         self.guesses -= 1
                     # if a letter is matched
                     elif functionComplete is True:
-                        wordDisplayAmend = AddLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
+                        wordDisplayAmend = addLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
                         self.wordDisplay = wordDisplayAmend
                         self.usedLetters.append(self.letterGuess)
                         print(Fore.GREEN+f"Word display: {self.wordDisplay}")
@@ -93,7 +93,7 @@ class WordGuess:
                 
     # end game messages
     def wordGuess_end(self):
-        word = SelectWinningWord(self.wordFamilyList)
+        word = selectWinningWord(self.wordFamilyList)
         if self.guesses == 0:
             self.game_complete = True
             print(Fore.GREEN+f"You have no guesses left,\nthe word you could not guess was {word}.")
@@ -120,7 +120,7 @@ class WordGuess:
             print(Fore.GREEN+f"Sorry, something seems to have gone wrong.") 
             self.game_complete = True 
 
-    def AlphabetWeighting(self):
+    def alphabetWeighting(self):
         my_file = open("dictionary.txt","r")
         wordList  = my_file.read().split()
         my_file.close()
@@ -166,7 +166,7 @@ def main():
         displayDatetime = now.strftime(Fore.BLUE+"Date-> %d-%m-%Y, Time-> %H:%M")
         print(Fore.BLUE+f"\n{displayDatetime}")
         print(Fore.CYAN+f"Welcome to the Word Guess game\n")
-        #newGame.AlphabetWeighting()
+        #newGame.alphabetWeighting()
         newGame.setupLevel()
         newGame.wordGuess_game()
         newGame.wordGuess_end() 
