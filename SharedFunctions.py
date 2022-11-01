@@ -107,33 +107,38 @@ def filter_wordList_easy(wordList,wordLength,letterGuess):
     ## ----- RULE: Pick largest group of words where the index of the letter appears
     targetWordList = []
     if letterOccur > 0: 
+        # list of words with largest count of letterGuess
         targetWordList = [word for word in wordList1 if countOf(word,letterGuess) == letterOccur]
         print(Fore.RED + f"Word length: {wordLength}, Max list of words for letter {letterGuess}: {len(targetWordList)}")
     
     if len(targetWordList) <= 10: ######################
         print(f"{targetWordList = }")
 
+    # print all index occur of letterGuess for word display prep
     wordIdx1 = []
     wordIdx1 = wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess)
     
     letterOccurSplitIdx = []
-    # get index of letter if only 1 letterOccur
+    # get index of letter if only 1 letterOccur for word display, word list already created line 111'ish
     if letterOccur == 1:
         letterOccurSplitIdx.append(wordIdx1.index(max(wordIdx1)))   # list with first largest letterOccur index position 
         print(f"index of max value in {letterOccurSplitIdx = }") 
 
     # get largest family indexes of letterGuess if letterOccur > 1
     if letterOccur >= 2:
-        #wordIdx1[letterOccurSplitIdx[0]]=0
-        #letterOccurSplitIdx.append(wordIdx1.index(max(wordIdx1)))
-        #print(f"indexes of max values in {letterOccurSplitIdx = }")
+        #return all word families
         family = defWordFamDict(targetWordList,letterGuess)
         #largestFamily1 = []
         #largestFamily1.append(enumerate(max(family,key=family.get)))
         # if more than two families only unpack 1st tuple 
+        
+        # choose best by max word count words not actually split yet
         largestFamily = max(family.items(), key=operator.itemgetter(1))[0]
         print(f"{largestFamily = }")
+        
+        
         #letterOccurSplitIdx.append(largestFamily.index(ele for ele in largestFamily if (ele in largestFamily) == letterGuess))
+        # get indexes of best family to pass and get words line 158'ish
         count=-1
         for letter in largestFamily:
             count +=1
@@ -141,19 +146,17 @@ def filter_wordList_easy(wordList,wordLength,letterGuess):
                 # return each index of letterOccur, resorted to count
                 letterOccurSplitIdx.append(count)
         print(f"Indexes of letterGuess in chosen family: {letterOccurSplitIdx =}")
-
+    
+    
+    # add words according to largest group of words according to letterGuess count
     targetWordListSplit = []
     listLength = len(targetWordList)
-    if listLength > 50:
-        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess]
-        print(f"List length > 50 line 149 = {listLength}")
-    elif listLength <= 50 and letterOccur == 2:
+    if letterOccur == 2:
         targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1]]== letterGuess]
         print(f"Check 2 occurrences of letter, print list ->\n{targetWordListSplit = } ")
-    elif listLength <= 50 and letterOccur == 3:
+    elif letterOccur == 3:
         targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1] and letterOccurSplitIdx[2]]== letterGuess]
         print(f"Check 3 occurrences of letter, print list ->\n{targetWordListSplit = } ")
-   
     else:
         targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess]
         print(f"List length else line 164 = {listLength}")        
