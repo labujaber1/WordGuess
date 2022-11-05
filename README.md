@@ -10,5 +10,4 @@ only succeed if there is one remaining in the computers dictionary and the compu
 to admit defeat.
 Each successful letter is displayed for the user and the program operates as a normal word guessing
 game would appear to work, except it tries to cheat under the hood.
-The easy level uses crisp logic with a degree of optimisation while the hard level will use another AI
-method such as neural networks.
+The easy level uses crisp logic with a degree of optimisation while the hard level is still in development.
