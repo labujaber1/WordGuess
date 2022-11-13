@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import random
 from colorama import Fore
-from SharedFunctions import get_WordFamilyList, filter_wordList_easy, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
+from SharedFunctions import get_WordFamilyList, filter_wordList_easy, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -12,7 +12,6 @@ class WordGuess:
     guesses = 0
     wordFamilyList = []
     wordLength = 0
-    #callAlgorithm = ""
     usedLetters = []
     wordDisplay = ""
     letterGuess = ""
@@ -20,13 +19,13 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        self.wordLength = random.randrange(4,12) ###############
-        #self.wordLength = 6 # for testing #######################
+        #self.wordLength = random.randrange(4,12) ###############
+        self.wordLength = 12 # for testing #######################
         self.guesses = self.wordLength*2
 
         #open text file and save to list
         self.wordFamilyList = get_WordFamilyList(self.wordLength) ###########
-        #self.wordFamilyList = ['beebeb','cecece' ]#################################
+        #self.wordFamilyList = ['beeboo','ceecll','googll','feefcc' ]#################################
         print(Fore.RED + f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
         # asking user to set the level for the game.
         while True:
@@ -66,11 +65,7 @@ class WordGuess:
                 elif self.guesses>0:
                     print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
                     # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
-                    if self.setLevel == 'easy':
-                        returnStuff = filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
-                    if self.setLevel == 'hard':
-                        returnStuff = filter_wordList_easy(self.wordFamilyList,self.wordLength,self.letterGuess)
-                        #returnStuff = filter_wordList_hard(self.wordFamilyList,self.wordLength,self.letterGuess)
+                    returnStuff = filter_wordList_easy(self.setLevel,self.wordFamilyList,self.wordLength,self.letterGuess)
                     self.wordFamilyList, letterGuessIdx, functionComplete = returnStuff # unpack tuple
                     print(Fore.RED + f"WordList length after function = {len(self.wordFamilyList)}")
                     # when no letter matched letterOccurred is 0
@@ -120,40 +115,7 @@ class WordGuess:
             print(Fore.GREEN+f"Sorry, something seems to have gone wrong.") 
             self.game_complete = True 
 
-    def alphabetWeighting(self):
-        my_file = open("dictionary.txt","r")
-        wordList  = my_file.read().split()
-        my_file.close()
-        
-        alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-        letterTotal = {}
-        letterFractionOfAlphabet = 0.038 # each letter 1/26
-        sumLetters = 0
-        # get total occurrence each letter in alphabet in word list.
-        for i in alphabet:
-            tot=0
-            for j in wordList:
-                if i in j:
-                    tot = tot + 1
-            letterTotal[i] = tot
-        #print(letterTotal)
-        # total letters in word list summed from aWeighting dictionary
-        sumLetters = sum(letterTotal.values()) 
-        #print(f"Sum of all letters in dictionary: \n{sumLetters}") # 863600 letters
-
-        # for each alphabet letter calc. weighting
-        # total each letter / total letters * 10 to 2 d.p should give range 0 - 1
-        # assign to new dictionary
-        # first sort aWeighting by value
-        res = {key: val for key, val in sorted(letterTotal.items(), key = lambda ele: ele[1], reverse = True)}
-        #print(f" Result of sorted action: \n{res}")
-        letterWeight = res
-        
-        # round value to 2 d.p eg 'e'=0.99, 'q'=0.02
-        letterWeight.update((x,round(y / sumLetters * 10,2 )) for x,y in letterWeight.items())
-        print(f"Letter weight update: \n{letterWeight}")
-        #returns dict of weights for each word in the original dictionary
-        return letterWeight
+    
 
 newGame = WordGuess()
 
