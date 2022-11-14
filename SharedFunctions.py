@@ -62,8 +62,8 @@ def getCountOfList(wordList1,letterGuess):
     print(Fore.RED + f"Total times the letter {letterGuess} appears in word 0-3 times = {listTotals}")
     return listTotals
 
-# define pattern and count number of words to wordFamilyNum if letter occur = 1 
-# or add word to wordFamilyWords as a list and score word if letter occur > 1
+# define pattern and count number of words to wordFamilyNum if letter occur = 1 (efficiency in mind for larger lists)
+# or add word to wordFamilyWords as a list and score word if letter occur > 1 (as word list gets smaller)
 # return both dictionaries
 def defWordFamDict(targetWordList,letterGuess,letterOccur):
     wordFamilyNum = dict()
@@ -94,7 +94,7 @@ def defWordFamDict(targetWordList,letterGuess,letterOccur):
                 A = [word,score]
                 wordFamilyWords[temp].append(A)
                 print(f"wordFamilyWords[temp] = wordFamilyWords[temp].append[word,score] = {temp = }, {score = },{word = }")
-                #wordFamilyWords[temp] = wordFamilyWords[temp],word ##### issue looks like (('word','word'),'word')
+                
     print(f"DefWordFamDict: {wordFamilyNum = }")
     print(f"DefWordFamDict: {wordFamilyWords = }")
     return wordFamilyNum,wordFamilyWords
@@ -153,7 +153,9 @@ def filter_wordList_easy(setLevel,wordList,wordLength,letterGuess):
     if letterOccur >= 2:
         #return all word family patterns according to letterOccur and number of words that letter occurs
         wordFamilyNum,wordFamilyWords = defWordFamDict(targetWordList,letterGuess,letterOccur)
+        # calculating best pattern by scoring words in each pattern
         optimizedPatternChoice = weightingForEachFamily(wordFamilyWords)
+        # best pattern
         familyChoice = []
         ########### MAYBE FOR HARD LEVEL RATHER DO SOMETHING ELSE ##############
         if setLevel == 'hard':
@@ -176,7 +178,7 @@ def filter_wordList_easy(setLevel,wordList,wordLength,letterGuess):
             familyChoice = largestFamily
         
         #letterOccurSplitIdx.append(largestFamily.index(ele for ele in largestFamily if (ele in largestFamily) == letterGuess))
-        # get indexes of best family to pass and get words line 158'ish
+        # get indexes of family choice to pass and get indices to use in word display
         count=-1
         for letter in familyChoice:
             count +=1
@@ -187,14 +189,18 @@ def filter_wordList_easy(setLevel,wordList,wordLength,letterGuess):
     
     
     # add words according to largest group of words according to letterGuess count
-    targetWordListSplit = []
+    targetWordListSplit: list.clear
     listLength = len(targetWordList)
-
+    # filtered word list by index of letters in letterOccurSplitIdx
+    #################
+    ###################  might be where the bug is (see screenshot) ################
+    ################# 'and', '&' between indices acting as 'or'
+    targetWordListSplit = []
     if letterOccur == 2:
-        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1]] == letterGuess]
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess and word[letterOccurSplitIdx[1]] == letterGuess]
         print(f"Check 2 occurrences of letter, print list ->\n{targetWordListSplit = } ")
     elif letterOccur == 3:
-        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0] and letterOccurSplitIdx[1] and letterOccurSplitIdx[2]] == letterGuess]
+        targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess and word[letterOccurSplitIdx[1]] == letterGuess and word[letterOccurSplitIdx[2]] == letterGuess]
         print(f"Check 3 occurrences of letter, print list ->\n{targetWordListSplit = } ")
     else:
         targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess]
@@ -225,7 +231,7 @@ def wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess):
     print(Fore.RED + f"Letter occurrence in split list: {res}")
     return res
 
-# for hard level
+# for hard level return list of letters with weighting
 def alphabetWeighting():
         my_file = open("dictionary.txt","r")
         wordList  = my_file.read().split()

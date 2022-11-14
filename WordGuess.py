@@ -19,8 +19,8 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        #self.wordLength = random.randrange(4,12) ###############
-        self.wordLength = 12 # for testing #######################
+        self.wordLength = random.randrange(4,12) ###############
+        #self.wordLength = 12 # for testing #######################
         self.guesses = self.wordLength*2
 
         #open text file and save to list
