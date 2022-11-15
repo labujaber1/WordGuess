@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import random
 from colorama import Fore
-from SharedFunctions import get_WordFamilyList, filter_wordList_easy, addLetterToWordDisplay, selectWinningWord
+from SharedFunctions import get_WordFamilyList, filter_wordList, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -19,8 +19,8 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        self.wordLength = random.randrange(4,12) ###############
-        #self.wordLength = 12 # for testing #######################
+        #self.wordLength = random.randrange(4,12) ###############
+        self.wordLength = 12 # for testing #######################
         self.guesses = self.wordLength*2
 
         #open text file and save to list
@@ -41,7 +41,7 @@ class WordGuess:
             else:
                 print(Fore.RED+"Did not compute..try again")
             
-    # main game loop, line 71 and 73 select easy or hard functions 
+    # main game loop
     def wordGuess_game(self):
        
         self.usedLetters = []
@@ -51,9 +51,9 @@ class WordGuess:
         while self.game_complete == False:
             self.usedLetters.sort()
             if self.guesses == 1:
-                print(Fore.CYAN+"You have {0} guess left".format(self.guesses))
+                print(Fore.CYAN+"\nYou have {0} guess left".format(self.guesses))
             else:
-                print(Fore.CYAN+"You have {0} guesses left".format(self.guesses))
+                print(Fore.CYAN+"\nYou have {0} guesses left".format(self.guesses))
             print(Fore.CYAN+"Used letters so far: {0}".format(self.usedLetters))
             print(Fore.GREEN+"Word: ",self.wordDisplay)
             self.letterGuess = input(Fore.WHITE+"Enter a letter: ").lower()
@@ -65,7 +65,7 @@ class WordGuess:
                 elif self.guesses>0:
                     print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
                     # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
-                    returnStuff = filter_wordList_easy(self.setLevel,self.wordFamilyList,self.wordLength,self.letterGuess)
+                    returnStuff = filter_wordList(self.setLevel,self.wordFamilyList,self.wordLength,self.letterGuess)
                     self.wordFamilyList, letterGuessIdx, functionComplete = returnStuff # unpack tuple
                     print(Fore.RED + f"WordList length after function = {len(self.wordFamilyList)}")
                     # when no letter matched letterOccurred is 0

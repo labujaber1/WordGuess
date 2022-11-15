@@ -109,9 +109,8 @@ def scoreWord(word):
 
 
 # pass in a word list and filter according to the user letter guess, return new list
-def filter_wordList_easy(setLevel,wordList,wordLength,letterGuess):
+def filter_wordList(setLevel,wordList,wordLength,letterGuess):
     wordList1: list = wordList
-    
     functionComplete: Boolean = False #false
     ## ------ FIRST LIST SPLIT SECTION -------- ##
     ## ---- RULE: pick largest group of words that contain letter
@@ -119,7 +118,6 @@ def filter_wordList_easy(setLevel,wordList,wordLength,letterGuess):
     listTotal = getCountOfList(wordList1,letterGuess)
     # select the largest count occurrence of the letterGuess param
     letterOccur = int(listTotal.index(max(listTotal)))
-    
     if letterOccur == 0:
         ''' End function '''
         # KEEP all words that don't contain the letter to list and return
@@ -275,18 +273,20 @@ def weightingForEachFamily(wordFamilyWords):
     score = 0
     # wordFamilyWords contain pattern with list of each [word , score],[word , score]
     # for each pattern sum each word score, index[1], add pattern and sum to dict.
-    # return dict
+    # Divide pattern sum by number of lists to get average, return dict
     wordFamily = wordFamilyWords
     for pattern in wordFamily:
         score = 0
+        listCount = 0
         #score = [[v for v in wordFamily[i]] for i in wordFamily.keys() if wordFamily.values(1) ]
         for list in wordFamily[pattern]:
             s = list[index(1)]
-            score = score+s
+            score = round(score + s,2)
+            listCount += 1
         if pattern not in dictOfPatternScore: 
-            dictOfPatternScore[pattern] =  score 
+            dictOfPatternScore[pattern] =  round(score / listCount,2)
         else:
-            dictOfPatternScore[pattern] =  dictOfPatternScore[pattern] + score
+            dictOfPatternScore[pattern] = round((dictOfPatternScore[pattern] + score) / listCount,2)
     # return dict of patterns and sum score of all matching words ie '_OO__' = 128
     print(f"{dictOfPatternScore = }")
     return dictOfPatternScore
