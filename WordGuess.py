@@ -1,10 +1,9 @@
-from ast import Break, Return
+from ast import Return
 from dataclasses import dataclass
 from datetime import datetime
-from operator import countOf
-import random
+from numpy.random import choice
 from colorama import Fore
-from SharedFunctions import get_WordFamilyList, filter_wordList, addLetterToWordDisplay, selectWinningWord
+from SharedFunctions import get_WordFamilyList, filter_wordList, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -20,7 +19,8 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        self.wordLength = random.randrange(4,12) ###############
+        self.wordLength = randomC() 
+        #print(f"Random number: {self.wordLength}")
         #self.wordLength = 12 # for testing #######################
         self.guesses = self.wordLength*2
 
@@ -68,7 +68,10 @@ class WordGuess:
                 elif self.guesses>0:
                     #print(Fore.RED + f"WordList length before function wordGuess line66 = {len(self.wordFamilyList)}")
                     # returning in tuple: targetWordListSplit,letterOccurSplit,functionComplete
-                    returnStuff = filter_wordList(self.setLevel,self.wordFamilyList,self.wordLength,self.letterGuess)
+                    if self.setLevel == 'easy':
+                        returnStuff = filter_wordList(self.wordFamilyList,self.wordLength,self.letterGuess)
+                    if self.setLevel == 'hard':
+                        returnStuff = filter_wordList_hard(self.wordFamilyList,self.wordLength,self.letterGuess)
                     self.wordFamilyList, letterGuessIdx, functionComplete = returnStuff # unpack tuple
                     #print(Fore.RED + f"WordList length after function = {len(self.wordFamilyList)}")
                     # when no letter matched letterOccurred is 0
@@ -145,6 +148,12 @@ def main():
                     exit() 
             except ValueError:
                 print("Don't understand, try again")
+
+def randomC():
+    numList = [4,5,6,7,8,9,10,11,12]
+    numL = choice(numList, 1, p=[0.12,0.12,0.12,0.12,0.12,0.15,0.15,0.05,0.05])
+    num = numL[0]
+    return num
 
 # this is how the program starts calling main function shown above
 if __name__ == '__main__':
