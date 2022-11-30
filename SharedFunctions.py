@@ -6,20 +6,18 @@ import random
 import operator
 from xmlrpc.client import Boolean
 
-
 #At the start of the program
 
 #read in dictionary.txt and sort by word length
 #write new list of words from random length selector
 #return new list for user to try and choose from
-def get_WordFamilyList(wordLen):
+def get_WordDictList():
     try:
         my_file = open("dictionary.txt","r")
-        wordFamilyList  = my_file.read().split()
+        wordDict  = my_file.read().split()
         my_file.close() # change to contact manager look it up
         #print(Fore.RED + f"Original list length = {len(wordFamilyList)}")
-        new_list = [ word for word in wordFamilyList if len(word) == wordLen ]
-        return new_list
+        return wordDict
     except FileNotFoundError:
         print(Fore.WHITE+f"Dictionary file not found.")
         return
@@ -68,6 +66,7 @@ def getCountOfList(wordList1,letterGuess):
 def defWordFamDict(targetWordList,letterGuess,letterOccur):
     wordFamilyNum = dict()
     wordFamilyWords = defaultdict(list)
+    letterWeight = alphabetWeighting()
     for word in targetWordList:
         temp = ""
         for ele in word:
@@ -81,7 +80,7 @@ def defWordFamDict(targetWordList,letterGuess,letterOccur):
                 wordFamilyNum[temp] = 1
             else:
                 # add word to wordFamilyWords if match pattern
-                score = scoreWord(word)
+                score = scoreWord(word,letterWeight)
                 A = [word,score]
                 wordFamilyWords[temp].append(A)
                 #print(f"wordFamilyWords[temp].append(A) = {temp = }, {score = },{word = }")
@@ -90,7 +89,7 @@ def defWordFamDict(targetWordList,letterGuess,letterOccur):
                 wordFamilyNum[temp] = wordFamilyNum[temp] + 1
             else:
                 # add each word as a separate list with score
-                score = scoreWord(word)
+                score = scoreWord(word,letterWeight)
                 A = [word,score]
                 wordFamilyWords[temp].append(A)
                 #print(f"wordFamilyWords[temp] = wordFamilyWords[temp].append[word,score] = {temp = }, {score = },{word = }")
@@ -111,8 +110,8 @@ def getLetterIdxInWord(familyChoice,letterGuess):
     return letterOccurSplitIdx
 
 # give score for each word
-def scoreWord(word):
-    letterWeight = alphabetWeighting()
+def scoreWord(word,letterWeight):
+    # letterWeight is dict of alphabet scores
     letterScore = 0.0
     for letter in word:
         ls = [v for k,v in letterWeight.items() if k==letter]
@@ -190,7 +189,6 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     functionComplete: Boolean = False #false
     ## ------ FIRST LIST SPLIT SECTION -------- ##
     ## ---- RULE: pick largest group of words that contain letter, if hard then filter duplicate letters
-    print("Entering hard filter")
     # filter out words with duplicate chars if size greater than half the original list size
     if wordLength > 9 and wordLength < 12:
         wordList1 = filterDuplicateLetters(wordList)
@@ -226,10 +224,10 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     ## ------- SECOND LIST SPLIT SECTION -------- ##
     ## ----- RULE: Pick largest group of words where the index of the letter appears
     targetWordList = []
-    if letterOccur > 0: 
+    #if letterOccur > 0: 
         # list of words with largest count of letterGuess
-        targetWordList = [word for word in wordList1 if countOf(word,letterGuess) == letterOccur]
-        print(Fore.RED + f"Word length: {wordLength}, Max list of words for letter {letterGuess}: {len(targetWordList)}")
+    targetWordList = [word for word in wordList1 if countOf(word,letterGuess) == letterOccur]
+    print(Fore.RED + f"Word length: {wordLength}, Max list of words for letter {letterGuess}: {len(targetWordList)}")
     # print all index occur of letterGuess for word display prep
     wordIdx1 = []
     wordIdx1 = wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess)
@@ -284,7 +282,6 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
 
 # strip wordList of any words with duplicate letters if size is not less than half size of original list 
 def filterDuplicateLetters(wordList:list):
-    print("This is the hard level")
     newWordList = []
     #print(f"Word list before hard filter: {len(wordList)}") 
     # add words that don't have duplicate chars
@@ -296,8 +293,7 @@ def filterDuplicateLetters(wordList:list):
     # if filtered list with duplicate chars removed is less than half then don't use filtered list
     if (percentage > 50):
         return newWordList
-    else:    
-        return wordList
+    return wordList
         
 
 # for each word in list count letterGuess in each index of word
@@ -320,13 +316,9 @@ def wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess):
     #print(Fore.RED + f"Letter occurrence in split list: {res}")
     return res
 
-# for optimisation ########################################################
+# for optimisation 
 def alphabetWeighting():
-        print("Starting alphabetWeighting function")
-        my_file = open("dictionary.txt","r")
-        wordList  = my_file.read().split()
-        my_file.close()
-        ########################## change not open each time ################
+        wordList  = get_WordDictList()
         alphabet = [
             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t',
             'u','v','w','x','y','z']
@@ -339,7 +331,6 @@ def alphabetWeighting():
                 if letter in word:
                     tot = tot + 1
             letterTotal[letter] = tot
-        # print(letterTotal)
         # total letters in word list summed from aWeighting dictionary 863600 letters
         sumLetters = sum(letterTotal.values()) 
         #print(f"Sum of all letters in dictionary: \n{sumLetters}") 
@@ -348,11 +339,9 @@ def alphabetWeighting():
         # total each letter / total letters * 10 to 2 d.p should give range 0 - 1
         # assign to new dictionary
         # first sort aWeighting by value
-        print("Start alphabetWeighting sort")
         res = {key: val for key, val in sorted(letterTotal.items(), key = lambda ele: ele[1], reverse = True)}
         #print(f" Result of sorted action: \n{res}")
         letterWeight = res
-        print("alphabetWeighting letterWeight update")
         letterWeight.update((x,round(y / sumLetters * 10,2 )) for x,y in letterWeight.items())
         #print(f"Letter weight update: \n{letterWeight}")
         #returns dict of weights for each word in the original dictionary
@@ -386,5 +375,4 @@ def weightingForEachFamily(wordFamilyWords):
     #print(f"{dictOfPatternScore = }")
     return dictOfPatternScore
 
-    # scoreword in defWordFamDict called in for loop which then calls alphabetWeighting function
-    # which runs for each word so takes along time
+    

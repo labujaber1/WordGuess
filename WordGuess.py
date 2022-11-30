@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from numpy.random import choice
 from colorama import Fore
-from SharedFunctions import get_WordFamilyList, filter_wordList, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
+from SharedFunctions import get_WordDictList, filter_wordList, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
@@ -20,13 +20,15 @@ class WordGuess:
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
         self.wordLength = randomC() 
-        #print(f"Random number: {self.wordLength}")
-        #self.wordLength = 12 # for testing #######################
         self.guesses = self.wordLength*2
 
         #open text file and save to list
-        self.wordFamilyList = get_WordFamilyList(self.wordLength) ###########
-        #self.wordFamilyList = ['beeboo','ceecll','googll','feefcc' ]#################################
+        wordDict = get_WordDictList() 
+        if len(wordDict) > 0:
+            self.wordFamilyList = [ word for word in wordDict if len(word) == self.wordLength ]
+        else:
+            print("Program ending")
+            return
         #print(Fore.RED + f"Main list filtered by word length {self.wordLength} \nand returned new list length {len(self.wordFamilyList)}")
         # asking user to set the level for the game.
         while True:
@@ -115,13 +117,10 @@ class WordGuess:
             self.game_complete = True
         if '-' not in self.wordDisplay:
             self.game_complete = True
-        ## delete after testing try catch didn't throw error as not Exception
         if len(self.wordFamilyList) == 0:    
             # don't want to throw Exception but carry on with another try   
             print(Fore.GREEN+f"Sorry, something seems to have gone wrong.") 
             self.game_complete = True 
-
-    
 
 newGame = WordGuess()
 
@@ -149,13 +148,14 @@ def main():
             except ValueError:
                 print("Don't understand, try again")
 
+# sneaky stuff 
 def randomC():
     numList = [4,5,6,7,8,9,10,11,12]
-    numL = choice(numList, 1, p=[0.12,0.12,0.12,0.12,0.12,0.15,0.15,0.05,0.05])
+    numL = choice(numList, 1, p=[0.15,0.15,0.15,0.13,0.12,0.1,0.1,0.05,0.05])
     num = numL[0]
     return num
 
-# this is how the program starts calling main function shown above
+# this is how the program starts calling main function 
 if __name__ == '__main__':
     main()
     
