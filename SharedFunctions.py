@@ -1,3 +1,14 @@
+############################################################################
+##                                                                        ##
+## Title: Word Guess Game                                                 ##
+## Author: 2018481                                                        ##
+## Date: 09/12/2022                                                       ##
+## Description: Hangman without the graphics and a little bit of naughty  ##
+## Version: 1.0                                                           ##
+##                                                                        ##
+############################################################################
+
+
 from ast import operator
 from collections import defaultdict
 from colorama import Fore
@@ -6,8 +17,12 @@ import random
 import operator
 from xmlrpc.client import Boolean
 
-#At the start of the program
-
+# List of functions and line number
+# get_WordDictList 269 addLetterToWordDisplay 41, selectWinningWord 54, getCountOfList 64,
+# defWordFamDict 81, getLetterIdxInWord 114, scoreWord 124, filter_wordList 133, 
+# filter_wordList_hard 198, getCountOfList 210, filterDuplicateLetters 294, 
+# wordListCountOccurEachIndex 311, alphabetWeighting 331, weightingForEachFamily 362
+#    
 #read in dictionary.txt and sort by word length
 #write new list of words from random length selector
 #return new list for user to try and choose from
@@ -93,9 +108,6 @@ def defWordFamDict(targetWordList,letterGuess,letterOccur):
                 A = [word,score]
                 wordFamilyWords[temp].append(A)
                 #print(f"wordFamilyWords[temp] = wordFamilyWords[temp].append[word,score] = {temp = }, {score = },{word = }")
-                
-    #print(f"DefWordFamDict: {wordFamilyNum = }")
-    #print(f"DefWordFamDict: {wordFamilyWords = }")
     return wordFamilyNum,wordFamilyWords
 
 # return index of chosen letter
@@ -105,7 +117,6 @@ def getLetterIdxInWord(familyChoice,letterGuess):
     for letter in familyChoice:
         count +=1
         if letter == letterGuess:
-            # return each index of letterOccur, resorted to count
             letterOccurSplitIdx.append(count)
     return letterOccurSplitIdx
 
@@ -130,7 +141,7 @@ def filter_wordList(wordList,wordLength,letterGuess):
     # select the largest count occurrence of the letterGuess param
     letterOccur = int(listTotal.index(max(listTotal)))
     if letterOccur == 0:
-        ''' End function '''
+        ''' End function return to main '''
         # KEEP all words that don't contain the letter to list and return
         wordList1 = [word for word in wordList1 if countOf(word,letterGuess) == letterOccur]
         print(Fore.GREEN + "letter not in word, try again")
@@ -167,7 +178,7 @@ def filter_wordList(wordList,wordLength,letterGuess):
         letterOccurSplitIdx = getLetterIdxInWord(familyChoice,letterGuess)
     # add words according to largest group of words according to letterGuess count
     targetWordListSplit: list.clear
-    # filtered word list by index of letters in letterOccurSplitIdx
+    # filter word list by index of letters in letterOccurSplitIdx
     targetWordListSplit = []
     if letterOccur == 2:
         targetWordListSplit = [word for word in targetWordList if word[letterOccurSplitIdx[0]] == letterGuess and word[letterOccurSplitIdx[1]] == letterGuess]
@@ -362,7 +373,6 @@ def weightingForEachFamily(wordFamilyWords):
     for pattern in wordFamily:
         score = 0
         listCount = 0
-        #score = [[v for v in wordFamily[i]] for i in wordFamily.keys() if wordFamily.values(1) ]
         for list in wordFamily[pattern]:
             s = list[index(1)]
             score = round(score + s,2)

@@ -1,9 +1,24 @@
+############################################################################
+##                                                                        ##
+## Title: Word Guess Game                                                 ##
+## Author: 2018481                                                        ##
+## Date: 09/12/2022                                                       ##
+## Description: Hangman without the graphics and a little bit of naughty  ##
+## Version: 1.0                                                           ##
+##                                                                        ##
+############################################################################
+
 from ast import Return
 from dataclasses import dataclass
 from datetime import datetime
 from numpy.random import choice
 from colorama import Fore
 from SharedFunctions import get_WordDictList, filter_wordList, filter_wordList_hard, addLetterToWordDisplay, selectWinningWord
+
+# Function list and line number
+# setupLevel 34, wordGuess_game 64, wordGuess_end 112, gameEndConditions 126, 
+# main 143, randomC 167
+
 
 @dataclass() #(frozen=True, order=True)
 class WordGuess:
