@@ -121,7 +121,7 @@ def getLetterIdxInWord(familyChoice,letterGuess):
     return letterOccurSplitIdx
 
 # give score for each word
-def scoreWord(word,letterWeight):
+def scoreWord(word,letterWeight:dict):
     # letterWeight is dict of alphabet scores
     letterScore = 0.0
     for letter in word:
