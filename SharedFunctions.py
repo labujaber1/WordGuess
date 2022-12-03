@@ -203,10 +203,10 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     # filter out words with duplicate chars if size greater than half the original list size
     if wordLength > 9 and wordLength < 12:
         wordList1 = filterDuplicateLetters(wordList)
-        print(f"Duplicate filter wordList length: {len(wordList1)}")
+        #print(f"Duplicate filter wordList length: {len(wordList1)}")
     else:
         wordList1 = wordList
-        print("No duplicate letter filter")
+        #print("No duplicate letter filter")
 
     # COUNT THEN ADD TO LIST to save memory space and reduce process time 
     listTotal = getCountOfList(wordList1,letterGuess)
@@ -238,7 +238,7 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     #if letterOccur > 0: 
         # list of words with largest count of letterGuess
     targetWordList = [word for word in wordList1 if countOf(word,letterGuess) == letterOccur]
-    print(Fore.RED + f"Word length: {wordLength}, Max list of words for letter {letterGuess}: {len(targetWordList)}")
+    #print(Fore.RED + f"Word length: {wordLength}, Max list of words for letter {letterGuess}: {len(targetWordList)}")
     # print all index occur of letterGuess for word display prep
     wordIdx1 = []
     wordIdx1 = wordListCountOccurEachIndex(wordLength,targetWordList,letterGuess)
@@ -249,7 +249,7 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     if letterOccur == 1:
         if wordLength >= 4 and wordLength < 9:
             letterOccurSplitIdx.append(wordIdx1.index(max(wordIdx1)))   # list with first largest letterOccur index position 
-            print(f"index of max value in {letterOccurSplitIdx = }")
+            #print(f"index of max value in {letterOccurSplitIdx = }")
         else:
             wordFamilyNum,wordFamilyWords = defWordFamDict(targetWordList,letterGuess,letterOccur)
             if len(wordFamilyNum) > 0:
@@ -271,7 +271,7 @@ def filter_wordList_hard(wordList,wordLength,letterGuess):
     if len(letterOccurSplitIdx) == 0:
         # get indexes of family choice to pass and get indices to use in word display
         letterOccurSplitIdx = getLetterIdxInWord(familyChoice,letterGuess)
-        print(f"Indexes of letterGuess in chosen family: {letterOccurSplitIdx=}")
+        #print(f"Indexes of letterGuess in chosen family: {letterOccurSplitIdx=}")
     
     # add words according to largest group of words according to letterGuess count
     targetWordListSplit: list.clear
@@ -360,7 +360,7 @@ def alphabetWeighting():
 
 # for optimisation
 def weightingForEachFamily(wordFamilyWords):
-    print("Starting weightingForEachFamily function")
+    #print("Starting weightingForEachFamily function")
     # when comparing which family to choose can calc weight for each word in family
     # and total for each family to choose the least which interprets as the 
     # least common letters in dictionary should make the hardest word to guess.

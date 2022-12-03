@@ -34,7 +34,7 @@ class WordGuess:
 
     def setupLevel(self):
         # getting the word size for word list and double for number of guesses
-        self.wordLength = randomC() 
+        self.wordLength = randomC()
         self.guesses = self.wordLength*2
 
         #open text file and save to list
