@@ -100,7 +100,7 @@ class WordGuess:
                         wordDisplayAmend = addLetterToWordDisplay(self.wordDisplay,letterGuessIdx,self.letterGuess)
                         self.wordDisplay = wordDisplayAmend
                         self.usedLetters.append(self.letterGuess)
-                        self.guesses -= 1
+                        #self.guesses -= 1
                         print(Fore.GREEN+f"Word display: {self.wordDisplay}")
                     else:
                         #print(f"Filter_wordList completeFunction = {functionComplete}")
