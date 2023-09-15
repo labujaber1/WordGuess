@@ -12,3 +12,6 @@ Each successful letter is displayed for the user and the program operates as a n
 game would appear to work, except it tries to cheat under the hood.
 The easy level uses crisp logic with a degree of optimisation while the hard level centers around finding
 the largest pattern of unique words.
+
+
+--build in cli with pyinstaller WordGuess.py --onefile
